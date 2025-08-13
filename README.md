@@ -60,4 +60,8 @@ npm test
 
 - Frontend: Deploy on Vercel
 
+    `https://web3-message-signer-verifier.vercel.app/`
+
 - Backend: Deploy on Render
+
+    `https://web3-message-signer-verifier.onrender.com`
