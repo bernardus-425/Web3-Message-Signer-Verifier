@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDynamicContext, useIsLoggedIn, DynamicWidget } from '@dynamic-labs/sdk-react-core';
+import Auth from './components/Auth';
 import Signer from './components/Signer';
 import History from './components/History';
 import MfaView from './components/MfaView';
@@ -13,6 +14,8 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import Collapse from '@mui/material/Collapse';
+import Divider from '@mui/material/Divider';
 
 export default function App() {
   const isLoggedIn = useIsLoggedIn();
@@ -35,9 +38,11 @@ export default function App() {
             Web3 Message Signer & Verifier
           </Typography>
 
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <DynamicWidget />
-          </Box>
+          {isLoggedIn && (
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <DynamicWidget />
+            </Box>
+          )}
 
           {isLoggedIn && (
             <Button color="inherit" onClick={() => handleLogOut()}>
@@ -48,18 +53,29 @@ export default function App() {
       </AppBar>
 
       <Container sx={{ py: 3 }}>
-        <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 2 }}>
-          <Paper variant="outlined" sx={{ p: 2 }}>
-            <DynamicWidget />
-          </Paper>
-        </Box>
+        {isLoggedIn && (
+          <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 2 }}>
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <DynamicWidget />
+            </Paper>
+          </Box>
+        )}
+
+        <Collapse in={!isLoggedIn} unmountOnExit>
+          <Grid container spacing={3} sx={{ mb: 1 }}>
+            <Grid>
+              <Auth />
+            </Grid>
+          </Grid>
+          <Divider sx={{ my: 2 }} />
+        </Collapse>
 
         <Grid container spacing={3}>
-          {isLoggedIn && (
-            <Grid>
+          <Grid>
+            <Collapse in={isLoggedIn} unmountOnExit>
               <MfaView />
-            </Grid>
-          )}
+            </Collapse>
+          </Grid>
 
           <Grid>
             <Signer onAdd={(item) => setHistory([item, ...history])} />

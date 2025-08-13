@@ -13,6 +13,10 @@ export const mockState: {
     getRecoveryCodes: ReturnType<typeof vi.fn>;
     completeAcknowledgement: ReturnType<typeof vi.fn>;
   };
+  connectWithOtp: {
+    connectWithEmail: ReturnType<typeof vi.fn>;
+    verifyOneTimePassword: ReturnType<typeof vi.fn>;
+  };
   _syncHandler?: () => unknown;
 } = {
   isLoggedIn: false,
@@ -24,5 +28,9 @@ export const mockState: {
     getUserDevices: vi.fn(async () => []),
     getRecoveryCodes: vi.fn(async () => ['CODE-111111', 'CODE-222222']),
     completeAcknowledgement: vi.fn(async () => undefined)
+  },
+  connectWithOtp: {
+    connectWithEmail: vi.fn(async (_email?: string) => undefined),
+    verifyOneTimePassword: vi.fn(async (_otp?: string) => undefined)
   }
 };

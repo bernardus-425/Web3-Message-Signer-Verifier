@@ -8,12 +8,10 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-// make fetch easy to stub
 if (!globalThis.fetch) {
   globalThis.fetch = vi.fn();
 }
 
-// mock qrcode (avoid drawing to canvas)
 vi.mock('qrcode', () => {
   return {
     default: { toCanvas: vi.fn(() => Promise.resolve()) },
@@ -21,12 +19,10 @@ vi.mock('qrcode', () => {
   };
 });
 
-// central Dynamic mocks; tests can mutate mockState
 vi.mock('@dynamic-labs/sdk-react-core', async () => {
   const { mockState } = await import('./stubs/dynamicState');
 
   return {
-    // hooks
     useIsLoggedIn: () => mockState.isLoggedIn,
     useDynamicContext: () => ({
       primaryWallet: mockState.primaryWallet,
@@ -39,7 +35,30 @@ vi.mock('@dynamic-labs/sdk-react-core', async () => {
       return null;
     },
 
-    // components
+    DynamicContextProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    DynamicWidget: () => <div data-testid="dynamic-widget" />
+  };
+});
+
+vi.mock('@dynamic-labs/sdk-react-core', async () => {
+  const React = await import('react');
+  const { mockState } = await import('./stubs/dynamicState');
+
+  return {
+    useIsLoggedIn: () => mockState.isLoggedIn,
+    useDynamicContext: () => ({
+      primaryWallet: mockState.primaryWallet,
+      handleLogOut: vi.fn(),
+      userWithMissingInfo: mockState.userWithMissingInfo
+    }),
+    useMfa: () => mockState.mfa,
+    useConnectWithOtp: () => mockState.connectWithOtp,
+
+    useSyncMfaFlow: ({ handler }: { handler: () => unknown }) => {
+      mockState._syncHandler = handler;
+      return null;
+    },
+
     DynamicContextProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     DynamicWidget: () => <div data-testid="dynamic-widget" />
   };
